@@ -1,23 +1,35 @@
 const express = require('express')
 const path = require('node:path')
 const app = express()
-const indexRouter = require("./routers/indexRouter.js")
 const session = require("express-session");
+const pgSession = require('connect-pg-simple')(session);
 const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs')
 const pool = require("./db/pool.js")
 require('dotenv').config()
 
-app.use(session({secret: process.env.SECRET, resave: false, saveUninitialized: false}))
-app.use(passport.session())
+const indexRouter = require("./routers/indexRouter.js")
+const postRouter = require("./routers/postRouter.js")
 
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
+app.use(session({
+    store: new pgSession({
+        pool : pool,
+    }),
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
+}));
+app.use(passport.session())
+
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/', indexRouter)
+app.use('/post', postRouter)
 
 app.get("/log-out", (req, res, next) => {
     req.logout((err) => {

@@ -12,7 +12,31 @@
         <a href="/log-in">Log In</a>
     <%} else {%>
         <h2>Welcome back <%= user.username %></h2>
+        <% if (user.membership == "member") {%>
+            <h3>you are a member of the club!</h3>
+        <%}%>
+        <a href="/post/create">Create Post</a>
+        <a href="/join">Join the club</a>
         <a href="/log-out">Log Out</a>
     <%}%>
+    <div>
+        <h2>Posts list</h2>
+        <% posts.map((post) => {%>
+            <form action="/post/delete/<%= post.id %>" method="POST">
+                <% if (user) {%>
+                    <% if (user.membership == "member") {%>
+                        <p>from: <%= post.username %>  at: <%= post.time %></p>
+                    <%}%>
+                <%}%>
+                <h2><%= post.title %></h2>
+                <p><%= post.text %></p>
+                <% if (user) {%>
+                    <% if (user.admin === true) { %>
+                        <button type="submit">Delete post</button>
+                    <%}%>
+                <%}%>
+            </form>
+        <%})%>
+    </div>
 </body>
 </html>

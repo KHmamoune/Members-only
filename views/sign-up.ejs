@@ -6,6 +6,7 @@
   <title>Document</title>
 </head>
 <body>
+    <h1>Sign Up</h1>
   <form action="/sign-up" method="POST">
     <div>
       <label for="username">Username: </label>
@@ -28,6 +29,13 @@
       <input type="password" id="conpassword" name="conpassword" />
     </div>
     <button type="submit">Sign Up</button>
+    <ul>
+        <% if (errors) {%>
+            <% errors.forEach(function(error) {%>
+                <li><%=error.msg%></li>
+            <%})%>
+        <%}%>
+    </ul>
   </form>
 </body>
 </html>
